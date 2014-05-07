@@ -1,0 +1,123 @@
+\documentclass[10pt]{article}
+
+
+<<function, results="asis", echo=FALSE>>=
+
+# source("~/R/strawberry/outsiders_2.R")
+dbdata<-get(load("2004.data"))
+##Define the function which calculate the outliers values
+outliers_new<-function(prev, value){
+  col.pos<-which(colnames(prev) == value)
+  data<-data.frame(prev[, c(1, 3, col.pos)])
+  Q<-quantile(data[,value], na.rm = T)
+  max<-Q[4]+1.5*(Q[4]-Q[2])
+  min<-Q[2]-1.5*(Q[4]-Q[2])
+  out.vals<-data.frame()
+  row.number<-data.frame()
+  out.vals<-data[which(data[,value] > max | data[,value] < min), ]
+return(out.vals)
+}
+@
+
+<<get_data, results="asis", echo=F>>=
+
+#gsub2 function to change _ to a space
+gsub2 <- function(pattern, replacement, x, ...) {
+  for(i in 1:length(pattern))
+    x <- gsub(pattern[i], replacement[i], x, ...)
+  x
+}
+from<-c('_')
+to<-c(' ')
+
+c.position<-colnames(dbdata)
+list_dfs<-list()
+ls.out.ms<-list()
+no_out<-character()
+col_an<-character()
+vals<-data.frame()
+
+for (i in c.position){
+  if (is.numeric(dbdata[,i])== T){
+    coln<-gsub2(from, to, i)
+    col_an<-append(col_an, coln)
+    
+    vals<-outliers_new(dbdata, i)
+    if (nrow(vals) == 0){
+      
+      coln<-gsub2(from, to, i)
+      no_out<-append(no_out, coln)##if there are no outliers values, store the column name in that object. "append" adds values to a vector
+     next}
+   else{
+     
+    mean.sd<-data.frame(mean = (mean(dbdata[,i], na.rm = T)), sd=sd(dbdata[,i], na.rm = T))
+    list_dfs<-list(values=vals, mean.sd=mean.sd)
+    ls.out.ms[[i]]<-list_dfs
+#      boxplot(dbdata[,i] )
+   }
+ }
+}
+# ls.all<-list(out.vals=list_dfs, mean.sd=ls.mean.sd)
+@
+
+<<tables, results="asis", echo=FALSE>>=
+table.out.val<-function(x, cap){
+#   rws <- seq(1, (nrow(x)), by = 2) ## This is to create table rows with alternating grey and white color, but didn't work with a long table. Source: http://stackoverflow.com/questions/16579562/r-knitr-xtable-alternating-row-colors
+#   col <- rep("\\rowcolor[gray]{0.95}", length(rws))
+  
+  print(xtable(x, caption=cap),
+      booktabs=TRUE,  
+      include.rownames=T,
+      floating=FALSE,
+      tabular.environment='longtable',
+      caption.placement="top"
+#       add.to.row = list(pos = as.list(rws), command = col)
+)
+  
+}
+@
+
+\usepackage{float} \restylefloat{table}
+\usepackage{cite} % cite package, to clean up citations in the main text. Do not remove.
+\usepackage{color}
+\usepackage{indentfirst}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage[labelfont=bf,labelsep=period]{caption}
+\usepackage{gensymb}
+\begin{document}
+
+
+\title{outliers values}
+\author{Hugo Pineda}
+\maketitle
+
+\section{Outline}
+We have analized the next numeric columns:
+\vspace{1em}
+
+<<col_outline, results='asis', echo=FALSE>>=
+kable(col_an)
+@
+
+\section{Correct values}
+The analysis has not found any outsider value in the next columns
+\vspace{1em}
+<<no_out, results='asis', echo=FALSE>>=
+kable(no_out)
+@
+
+\pagebreak
+\section{Outliers values}
+\vspace{1em}
+<<run-all, include=FALSE, echo=FALSE>>=
+  out = NULL
+for (i in names(ls.out.ms)){
+  out = c(out, knit_child("~/R/strawberry/outliers_loop_2.Rnw"))
+  #   cat("This are values from column", i)
+}
+@
+\Sexpr{paste(out, collapse = '\n')}
+
+
+\end{document}
