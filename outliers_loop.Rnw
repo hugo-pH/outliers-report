@@ -39,7 +39,7 @@ bx<-boxplot(dbdata[,i], las=1,
 
 \begin{figure}[H]%The [H] option is really important to avoid floating plots
 <<results='asis', fig.align='center', fig.height=3, fig.show='asis', echo=FALSE, cache=FALSE>>=
-# par(mar=rep(0, 4), ann=FALSE)
+
 colors=c("orange")
 xlab=paste(i, "values")
 histo<-hist(dbdata[,i], main="",
