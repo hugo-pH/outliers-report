@@ -69,9 +69,7 @@ table.out.val<-function(x, cap){
       include.rownames=T,
       floating=FALSE,
       tabular.environment='longtable',
-      caption.placement="top"
-
-)
+      caption.placement="top")
   
 }
 @
