@@ -3,7 +3,7 @@
 
 <<function, results="asis", echo=FALSE>>=
 
-# source("~/R/strawberry/outsiders_2.R")
+
 dbdata<-get(load("2004.data"))
 ##Define the function which calculate the outliers values
 outliers_new<-function(prev, value){
@@ -53,17 +53,16 @@ for (i in c.position){
     mean.sd<-data.frame(mean = (mean(dbdata[,i], na.rm = T)), sd=sd(dbdata[,i], na.rm = T))
     list_dfs<-list(values=vals, mean.sd=mean.sd)
     ls.out.ms[[i]]<-list_dfs
-#      boxplot(dbdata[,i] )
+
    }
  }
 }
-# ls.all<-list(out.vals=list_dfs, mean.sd=ls.mean.sd)
+
 @
 
 <<tables, results="asis", echo=FALSE>>=
 table.out.val<-function(x, cap){
-#   rws <- seq(1, (nrow(x)), by = 2) ## This is to create table rows with alternating grey and white color, but didn't work with a long table. Source: http://stackoverflow.com/questions/16579562/r-knitr-xtable-alternating-row-colors
-#   col <- rep("\\rowcolor[gray]{0.95}", length(rws))
+
   
   print(xtable(x, caption=cap),
       booktabs=TRUE,  
@@ -71,14 +70,14 @@ table.out.val<-function(x, cap){
       floating=FALSE,
       tabular.environment='longtable',
       caption.placement="top"
-#       add.to.row = list(pos = as.list(rws), command = col)
+
 )
   
 }
 @
 
 \usepackage{float} \restylefloat{table}
-\usepackage{cite} % cite package, to clean up citations in the main text. Do not remove.
+\usepackage{cite}
 \usepackage{color}
 \usepackage{indentfirst}
 \usepackage{booktabs}
@@ -114,7 +113,7 @@ kable(no_out)
   out = NULL
 for (i in names(ls.out.ms)){
   out = c(out, knit_child("~/R/strawberry/outliers_loop.Rnw"))
-  #   cat("This are values from column", i)
+ 
 }
 @
 \Sexpr{paste(out, collapse = '\n')}
