@@ -21,7 +21,7 @@ return(out.vals)
 
 <<get_data, results="asis", echo=F>>=
 
-#gsub2 function to change _ to a space
+#gsub2 function to change _ to a space, http://stackoverflow.com/questions/6954017/r-replace-characters-using-gsub-how-to-create-a-function
 gsub2 <- function(pattern, replacement, x, ...) {
   for(i in 1:length(pattern))
     x <- gsub(pattern[i], replacement[i], x, ...)
